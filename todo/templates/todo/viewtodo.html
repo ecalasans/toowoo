@@ -2,4 +2,11 @@
 
 {% block content %}
     {{ todo.title }}
+    {{ error }}
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+        <button type="reset">Clean</button>
+    </form>
 {% endblock %}

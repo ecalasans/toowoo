@@ -78,6 +78,19 @@ def createTodo(request):
                                    'error':'Erro nos dados!  Verifique'})
 
 def viewtodo(request, todo_pk):
-    todo = get_object_or_404(Todo, pk=todo_pk)
-    return render(request, 'todo/viewtodo.html',
-                  context={'todo':todo})
+    todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)  #Garante que outros não alterem o que não é seu
+
+    if request.method == 'GET':
+        form = TodoForm(instance=todo)
+        return render(request, 'todo/viewtodo.html',
+                      context={'todo': todo, 'form': form})
+    else:
+        try:
+            form = TodoForm(request.POST, instance=todo)
+            form.save()
+            return redirect('currenttodos')
+        except ValueError:
+            return render(request, 'todo/viewtodo.html',
+                          context={'todo': todo, 'form': form,
+                                   'error':"Dados errados!"})
+
